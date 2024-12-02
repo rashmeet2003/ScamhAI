@@ -4,43 +4,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload</title>
+    <title>Upload - ScamhAI</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://media.licdn.com/dms/image/v2/C4E12AQEjvQnQbN8B1Q/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1649435129082?e=1738800000&v=beta&t=5VUbpV_x2MLkc5wSup_YD983o1fqubJgDC0nFC8r3iw') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 0.95;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 50px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            max-width: 100px; /* Smaller logo */
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 2.5em;
+            color: #333;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 10px 20px;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 18px;
+        }
+    </style>
 </head>
 
 <body>
+    <a href="index.html" class="home-link">Home</a>
+
     <div class="container">
-        <img src="https://previews.dropbox.com/p/thumb/ACd0Unj5EfPVWM_-TyOBcD61GtW47-gK1r226R0Tgmhsgb5USsW-JWh20HGO2Kc1Ep14pQ-3-gZmQvuDPTwzafrCVdVEaVg5nheJKA4D8RkYvkpKRyTn-vZ6PsAyoZt82E06_RntC9Zfiydx8AcxHP9_i8oTphi-lG26Ji55LpCiJaOYJwH4rtMDP4L3etJG6-VGDzzP3owibJzuhcOzm9akt92KGtivS1sioilukiCA4BAX17lzr_tJ7_2H0RqJ1y4SXQZxMgO-exZR9K3JmHBAEvtZ24pYziNIP0BRxE6-0E1Vg3lEKhd00U8_F2JwMhYLXdBkMj06l2MKufWpyGNi/p.png?is_prewarmed=true" alt="Logo" class="logo">
-        <h1>Upload Image for Detection</h1>
-        <input type="file" id="image-file" />
-        <button class="button" onclick="uploadImage()">Upload</button>
+        <!-- Logo -->
+        <a href="index.html">
+            <img src="https://previews.dropbox.com/p/thumb/ACd0Unj5EfPVWM_-TyOBcD61GtW47-gK1r226R0Tgmhsgb5USsW-JWh20HGO2Kc1Ep14pQ-3-gZmQvuDPTwzafrCVdVEaVg5nheJKA4D8RkYvkpKRyTn-vZ6PsAyoZt82E06_RntC9Zfiydx8AcxHP9_i8oTphi-lG26Ji55LpCiJaOYJwH4rtMDP4L3etJG6-VGDzzP3owibJzuhcOzm9akt92KGtivS1sioilukiCA4BAX17lzr_tJ7_2H0RqJ1y4SXQZxMgO-exZR9K3JmHBAEvtZ24pYziNIP0BRxE6-0E1Vg3lEKhd00U8_F2JwMhYLXdBkMj06l2MKufWpyGNi/p.png?is_prewarmed=true" alt="Logo" class="logo">
+        </a>
+
+        <h1>Upload Page</h1>
+
+        <!-- Upload Form -->
+        <form id="uploadForm">
+            <input type="file" id="file" required><br><br>
+            <button type="submit">Upload</button>
+        </form>
+
+        <div class="message" id="message"></div>
     </div>
 
     <script>
-        async function uploadImage() {
-            const fileInput = document.getElementById('image-file');
-            const file = fileInput.files[0];
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            // Assuming successful upload for demo purposes
+            var file = document.getElementById('file').files[0];
 
-            if (!file) {
-                alert('Please choose an image to upload.');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            const response = await fetch('http://localhost:8080/upload', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                alert(data.message);
+            if (file) {
+                document.getElementById('message').textContent = "File uploaded successfully!";
+                document.getElementById('message').style.color = "green";
             } else {
-                alert('Error uploading image.');
+                document.getElementById('message').textContent = "Please select a file to upload.";
+                document.getElementById('message').style.color = "red";
             }
-        }
+        });
     </script>
 </body>
 

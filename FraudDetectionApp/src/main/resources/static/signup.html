@@ -4,15 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScamhAI - Sign Up</title>
+    <title>Sign Up - ScamhAI</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background: url('https://media.licdn.com/dms/image/v2/C4E12AQEjvQnQbN8B1Q/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1649435129082?e=1738800000&v=beta&t=5VUbpV_x2MLkc5wSup_YD983o1fqubJgDC0nFC8r3iw') no-repeat center center fixed;
             background-size: cover;
             opacity: 0.95;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5em;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .header a {
+            color: #333;
+            text-decoration: none;
         }
 
         .container {
@@ -38,60 +53,102 @@
             color: #333;
         }
 
-        input, button {
-            width: 100%;
+        input {
             padding: 10px;
-            margin: 10px 0;
+            margin: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            width: 80%;
+            font-size: 1.2em;
         }
 
-        .button {
+        button {
             background-color: #4CAF50;
             color: white;
             text-transform: uppercase;
             border: none;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            padding: 10px 20px;
         }
 
-        .button:hover {
+        button:hover {
             background-color: #45a049;
+        }
+
+        .message {
+            font-size: 1.2em;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .error {
+            color: red;
         }
     </style>
 </head>
 
 <body>
+    <div class="header">
+        <a href="index.html">Home</a>
+    </div>
     <div class="container">
-        <img src="https://previews.dropbox.com/p/thumb/ACd0Unj5EfPVWM_-TyOBcD61GtW47-gK1r226R0Tgmhsgb5USsW-JWh20HGO2Kc1Ep14pQ-3-gZmQvuDPTwzafrCVdVEaVg5nheJKA4D8RkYvkpKRyTn-vZ6PsAyoZt82E06_RntC9Zfiydx8AcxHP9_i8oTphi-lG26Ji55LpCiJaOYJwH4rtMDP4L3etJG6-VGDzzP3owibJzuhcOzm9akt92KGtivS1sioilukiCA4BAX17lzr_tJ7_2H0RqJ1y4SXQZxMgO-exZR9K3JmHBAEvtZ24pYziNIP0BRxE6-0E1Vg3lEKhd00U8_F2JwMhYLXdBkMj06l2MKufWpyGNi/p.png?is_prewarmed=true" alt="ScamhAI Logo" class="logo">
-        <h1>Sign Up</h1>
-        <input type="email" id="signup-email" placeholder="Email" required />
-        <input type="text" id="signup-username" placeholder="Username" required />
-        <input type="password" id="signup-password" placeholder="Password" required />
-        <button class="button" onclick="signUp()">Sign Up</button>
+        <img src="https://previews.dropbox.com/p/thumb/ACd0Unj5EfPVWM_-TyOBcD61GtW47-gK1r226R0Tgmhsgb5USsW-JWh20HGO2Kc1Ep14pQ-3-gZmQvuDPTwzafrCVdVEaVg5nheJKA4D8RkYvkpKRyTn-vZ6PsAyoZt82E06_RntC9Zfiydx8AcxHP9_i8oTphi-lG26Ji55LpCiJaOYJwH4rtMDP4L3etJG6-VGDzzP3owibJzuhcOzm9akt92KGtivS1sioilukiCA4BAX17lzr_tJ7_2H0RqJ1y4SXQZxMgO-exZR9K3JmHBAEvtZ24pYziNIP0BRxE6-0E1Vg3lEKhd00U8_F2JwMhYLXdBkMj06l2MKufWpyGNi/p.png?is_prewarmed=true" alt="Logo" class="logo">
+        <h1>Create an Account</h1>
+        <form id="signupForm">
+            <input type="email" id="email" placeholder="Email" required><br>
+            <input type="text" id="username" placeholder="Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required><br>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="message" id="message"></div>
+        <a href="login.html"><button>Already a member? Login</button></a>
     </div>
 
     <script>
-        async function signUp() {
-            const email = document.getElementById('signup-email').value;
-            const username = document.getElementById('signup-username').value;
-            const password = document.getElementById('signup-password').value;
+        document.getElementById('signupForm').addEventListener('submit', function (e) {
+            e.preventDefault();
 
-            const response = await fetch('http://localhost:8080/api/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, username, password }),
-            });
+            var email = document.getElementById('email').value;
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (response.ok) {
-                alert('Sign up successful! Please log in.');
-                window.location.href = 'login.html';
-            } else {
-                alert('Error during signup.');
+            // Validate password strength
+            var passwordPattern = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            if (!passwordPattern.test(password)) {
+                document.getElementById('message').textContent = "Password must be at least 8 characters long, include one capital letter and one number.";
+                document.getElementById('message').classList.add('error');
+                return;
             }
-        }
+
+            if (password !== confirmPassword) {
+                document.getElementById('message').textContent = "Passwords do not match!";
+                document.getElementById('message').classList.add('error');
+                return;
+            }
+
+            // Check if username and email are unique
+            var users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.some(u => u.email === email)) {
+                document.getElementById('message').textContent = "Email already registered. Please login.";
+                document.getElementById('message').classList.add('error');
+                return;
+            }
+            if (users.some(u => u.username === username)) {
+                document.getElementById('message').textContent = "Username already taken.";
+                document.getElementById('message').classList.add('error');
+                return;
+            }
+
+            // Save the new user to localStorage
+            users.push({ email: email, username: username, password: password });
+            localStorage.setItem('users', JSON.stringify(users));
+
+            document.getElementById('message').textContent = "Sign up successful! Please log in.";
+            document.getElementById('message').classList.remove('error');
+        });
     </script>
 </body>
 
