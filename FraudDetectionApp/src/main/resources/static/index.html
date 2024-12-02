@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamhAI - Credit Card Fraud Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: rgba(0, 0, 0, 0.5) url('https://media.licdn.com/dms/image/v2/C4E12AQEjvQnQbN8B1Q/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1649435129082?e=1738800000&v=beta&t=5VUbpV_x2MLkc5wSup_YD983o1fqubJgDC0nFC8r3iw') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #logo {
+            display: block;
+            margin: 0 auto;
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="file"] {
+            width: auto;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            color: red;
+            display: none;
+            font-size: 14px;
+        }
+
+        #fraud-result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ffcccb;
+            color: #d8000c;
+            border-radius: 5px;
+        }
+
+        .form-section h2 {
+            margin-bottom: 10px;
+        }
+
+        .content {
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo Section -->
+        <img id="logo" src="https://previews.dropbox.com/p/thumb/ACd0Unj5EfPVWM_-TyOBcD61GtW47-gK1r226R0Tgmhsgb5USsW-JWh20HGO2Kc1Ep14pQ-3-gZmQvuDPTwzafrCVdVEaVg5nheJKA4D8RkYvkpKRyTn-vZ6PsAyoZt82E06_RntC9Zfiydx8AcxHP9_i8oTphi-lG26Ji55LpCiJaOYJwH4rtMDP4L3etJG6-VGDzzP3owibJzuhcOzm9akt92KGtivS1sioilukiCA4BAX17lzr_tJ7_2H0RqJ1y4SXQZxMgO-exZR9K3JmHBAEvtZ24pYziNIP0BRxE6-0E1Vg3lEKhd00U8_F2JwMhYLXdBkMj06l2MKufWpyGNi/p.png?is_prewarmed=true" alt="ScamhAI Logo" />
+        
+        <h1>ScamhAI - Credit Card Fraud Detection</h1>
+
+        <!-- Login Section -->
+        <div class="form-section" id="login-section">
+            <h2>Login</h2>
+            <input type="text" id="login-username" placeholder="Username" required />
+            <input type="password" id="login-password" placeholder="Password" required />
+            <button onclick="login()">Login</button>
+        </div>
+
+        <!-- Signup Section -->
+        <div class="form-section" id="signup-section">
+            <h2>Sign Up</h2>
+            <input type="email" id="signup-email" placeholder="Email" required />
+            <input type="text" id="signup-username" placeholder="Username" required />
+            <input type="password" id="signup-password" placeholder="Password" required />
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required />
+            <p id="password-error">Passwords do not match!</p>
+            <p id="password-validation-error">Password must be at least 8 characters long, contain a number and an uppercase letter.</p>
+            <button onclick="signUp()">Sign Up</button>
+        </div>
+
+        <!-- Fraud Detection Section -->
+        <div class="form-section" id="fraud-section">
+            <h2>Upload Transaction File</h2>
+            <input type="file" id="transaction-file" />
+            <button onclick="upload()">Detect Fraud</button>
+            <div id="fraud-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Login Function
+        async function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const response = await fetch('http://localhost:8080/api/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.text();
+            if (response.ok) {
+                alert(data); // Success message
+                window.location.href = "/fraud-section"; // Redirect to fraud detection section
+            } else {
+                alert('Invalid username or password.');
+            }
+        }
+
+        // Sign Up Function
+        function signUp() {
+            const email = document.getElementById('signup-email').value;
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                document.getElementById('password-error').style.display = 'block';
+                return;
+            }
+
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                document.getElementById('password-validation-error').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('password-error').style.display = 'none';
+            document.getElementById('password-validation-error').style.display = 'none';
+
+            // Call API to sign up user (you can implement the backend logic here)
+            alert('Sign Up Successful!');
+        }
+
+        // Upload Function for Fraud Detection
+        async function upload() {
+            const fileInput = document.getElementById('transaction-file');
+            if (fileInput.files.length === 0) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const filePath = file.name;
+
+            const response = await fetch('http://localhost:8080/api/detect-fraud', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(filePath),
+            });
+
+            const result = await response.text();
+            document.getElementById('fraud-result').innerText = result;
+        }
+    </script>
+
+    <div class="footer">
+        <p>&copy; 2024 Fraud Detection System | All Rights Reserved</p>
+    </div>
+</body>
+</html>
