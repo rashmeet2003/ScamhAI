@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <img src="https://previews.dropbox.com/p/thumb/ACd0Unj5EfPVWM_-TyOBcD61GtW47-gK1r226R0Tgmhsgb5USsW-JWh20HGO2Kc1Ep14pQ-3-gZmQvuDPTwzafrCVdVEaVg5nheJKA4D8RkYvkpKRyTn-vZ6PsAyoZt82E06_RntC9Zfiydx8AcxHP9_i8oTphi-lG26Ji55LpCiJaOYJwH4rtMDP4L3etJG6-VGDzzP3owibJzuhcOzm9akt92KGtivS1sioilukiCA4BAX17lzr_tJ7_2H0RqJ1y4SXQZxMgO-exZR9K3JmHBAEvtZ24pYziNIP0BRxE6-0E1Vg3lEKhd00U8_F2JwMhYLXdBkMj06l2MKufWpyGNi/p.png?is_prewarmed=true" alt="Logo" class="logo">
+        <h1>Upload Image for Detection</h1>
+        <input type="file" id="image-file" />
+        <button class="button" onclick="uploadImage()">Upload</button>
+    </div>
+
+    <script>
+        async function uploadImage() {
+            const fileInput = document.getElementById('image-file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please choose an image to upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('http://localhost:8080/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+            } else {
+                alert('Error uploading image.');
+            }
+        }
+    </script>
+</body>
+
+</html>

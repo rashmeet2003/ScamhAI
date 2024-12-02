@@ -1,20 +1,55 @@
 package Controller;
 
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ScamhAI.FraudDetection.FeatureGenerator;
 import com.ScamhAI.FraudDetection.Transaction;
-import org.apache.catalina.User;
 
-import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
+import model.User;
+import repository.UserRepository;
 
 @RestController
 @RequestMapping("/api")
 public class APIController {
+	
+	@Autowired
+    private UserRepository userRepository;
 
+    // Sign Up: Save user credentials
+    @PostMapping("/signup")
+    public String signup(@RequestBody User user) {
+        if (userRepository.existsById(user.getUsername())) {
+            return "Username already exists!";
+        }
+        userRepository.save(user);
+        return "User signed up successfully!";
+    }
+
+    // Login: Validate user credentials
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        User storedUser = userRepository.findByUsername(user.getUsername());
+        if (storedUser != null && storedUser.getPassword().equals(user.getPassword())) {
+            return "Login successful!";
+        } else {
+            return "Invalid credentials!";
+        }
+    }
+    // Validate user for login
     @PostMapping("/validate")
     public ResponseEntity<String> validateUser(@RequestBody User user) {
         if ("admin".equals(user.getUsername()) && "password123".equals(user.getPassword())) {
@@ -24,10 +59,9 @@ public class APIController {
         }
     }
 
-    // Updated to accept a MultipartFile for file upload
+    // Handle file upload and fraud detection
     @PostMapping("/detect-fraud")
     public ResponseEntity<String> detectFraud(@RequestParam("file") MultipartFile file) {
-        // Process the uploaded file and detect fraud
         try {
             // Save the uploaded file temporarily for further processing
             File tempFile = File.createTempFile("transactions", ".csv");
@@ -51,15 +85,14 @@ public class APIController {
         }
     }
 
-    // This method simulates loading transactions from a CSV file (you need to implement CSV parsing logic)
+    // Simulate loading transactions from a CSV file (implement CSV parsing)
     private List<Transaction> loadTransactions(String filePath) throws IOException {
         List<Transaction> transactions = new ArrayList<>();
         
-        // Assuming you are using Apache Commons CSV to parse the CSV file
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split(","); // Assuming CSV is comma-separated
+                String[] data = line.split(",");
                 if (data.length == 4) {
                     String userId = data[0];
                     double amount = Double.parseDouble(data[1]);

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScamhAI - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://media.licdn.com/dms/image/v2/C4E12AQEjvQnQbN8B1Q/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1649435129082?e=1738800000&v=beta&t=5VUbpV_x2MLkc5wSup_YD983o1fqubJgDC0nFC8r3iw') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 0.95;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        #home-btn {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 2.5em;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <div class="form-section">
+            <input type="text" id="login-username" placeholder="Username" required />
+            <input type="password" id="login-password" placeholder="Password" required />
+            <button onclick="login()">Login</button>
+        </div>
+        <div id="home-btn">
+            <a href="home.html"><button>Home</button></a>
+        </div>
+    </div>
+
+    <script>
+        async function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const response = await fetch('http://localhost:8080/api/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.text();
+            if (response.ok) {
+                alert(data);
+                window.location.href = 'upload.html';
+            } else {
+                alert(data);
+            }
+        }
+    </script>
+</body>
+
+</html>
